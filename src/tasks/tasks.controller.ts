@@ -22,7 +22,7 @@ import { TasksService } from './tasks.service';
 export class TasksController {
   constructor(private tasksService: TasksService) {}
 
-/* 
+  /* 
   @Post()
   createTask(@Body() createTaskDto: CreateTaskDto): Task {
     return this.tasksService.createTask(createTaskDto);
@@ -64,6 +64,6 @@ export class TasksController {
   }
   @Get()
   getTasks(@Query() filterDto: GetFilterDto): Promise<Task[]> {
-   return this.tasksService.getTasks(filterDto);
+    return this.tasksService.getTasks(filterDto);
   }
 }
