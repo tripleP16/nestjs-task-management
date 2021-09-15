@@ -6,12 +6,13 @@ import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskRepository } from './task.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
+import { User } from 'src/auth/entities/user.entity';
 @Injectable()
 export class TasksService {
-  constructor (
-      @InjectRepository(TaskRepository)
-      private taskRepo: TaskRepository
-    ) {}
+  constructor(
+    @InjectRepository(TaskRepository)
+    private taskRepo: TaskRepository,
+  ) {}
 
   /*getAllTasks(): Task[] {
     return this.tasks;
@@ -64,35 +65,39 @@ export class TasksService {
     return tasks;
   }*/
 
-  async getTaskById(id:string): Promise<Task> {
-    const found = await this.taskRepo.findOne(id); 
-    if (! found) {
-      throw new NotFoundException('Task not found')
+  async getTaskById(id: string, user: User): Promise<Task> {
+    const found = await this.taskRepo.findOne({ where: { id, user } });
+    if (!found) {
+      throw new NotFoundException('Task not found');
     }
-    return found; 
+    return found;
   }
 
-  createTask(data: CreateTaskDto): Promise<Task> {
-    return this.taskRepo.createTask(data);
+  createTask(data: CreateTaskDto, user: User): Promise<Task> {
+    return this.taskRepo.createTask(data, user);
   }
 
-  async deleteTaskById(id: string): Promise<void> {
-    const result = await this.taskRepo.delete(id);
-    if(result.affected == 0) {
-      throw new NotFoundException('Not found')
+  async deleteTaskById(id: string, user: User): Promise<void> {
+    const result = await this.taskRepo.delete({ id, user });
+    if (result.affected == 0) {
+      throw new NotFoundException('Not found');
     }
   }
-  async updateTaskStatus(id: string, TaskStatus: UpdateTaskStatusDto): Promise<Task> {
-    const task = await this.getTaskById(id); 
+  async updateTaskStatus(
+    user: User,
+    id: string,
+    TaskStatus: UpdateTaskStatusDto,
+  ): Promise<Task> {
+    const task = await this.getTaskById(id, user);
 
     task.status = TaskStatus.status;
 
-    await this.taskRepo.save(task); 
+    await this.taskRepo.save(task);
 
     return task;
   }
 
-  getTasks(filterDto: GetFilterDto): Promise<Task[]> {
-    return this.taskRepo.getTasks(filterDto)
+  getTasks(filterDto: GetFilterDto, user: User): Promise<Task[]> {
+    return this.taskRepo.getTasks(filterDto, user);
   }
 }
