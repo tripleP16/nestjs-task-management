@@ -6,7 +6,7 @@ import { UpdateTaskStatusDto } from './dto/update-task-status.dto';
 import { TaskRepository } from './task.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
-import { User } from 'src/auth/entities/user.entity';
+import { User } from '../auth/entities/user.entity';
 @Injectable()
 export class TasksService {
   constructor(
